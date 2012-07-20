@@ -1,0 +1,102 @@
+Subject:
+[Spirit-general] Scripting Language
+From:
+"Bryan Ross" <me@daerid.com>
+Date:
+Wed, 19 Nov 2003 18:46:04 -0800
+To:
+<spirit-general@lists.sourceforge.net>
+
+Hey all.
+
+Well, here it is. It's far from complete, and not 100% debugged, but it
+works. There's a sample main.cpp in the archive that will compile and
+execute the included test.txt file, which should demonstrate the syntax of
+the language fairly well. Also, the entire spirit grammar is in
+compiler.cpp, which will explicitly explain the syntax of the scripting
+language.
+
+I'd love for all of you to take a look and give me any possible feedback.
+Also, don't hesitate to rip it apart or improve on anything you see. The
+fact of the matter is, I don't have much time available right now to
+finishing and polishing it up. I'd just figure I'd get something out there
+that actually functions that others could take a look at and see how spirit
+may be used for designing and implementing a scripting language.
+
+I wanted to upload this to http://spirit.sourceforge.net/dl/, but I forgot
+my login password, and the password recovery system is borked, so I'll just
+post it to the newsgroup.
+
+Also, to re-iterate, here is the post I made earlier, with some more info on
+the language:
+
+PS: Joel, I've updated the files all to sport a very slightly modified
+version of the spirit license.
+
+Bryan Ross
+me@daerid.com
+
+-----Original Message-----
+From: Bryan Ross [me@daerid.com]
+Sent: Thursday, November 13, 2003 10:15 AM
+To: spirit-general@lists.sourceforge.net
+Subject: [Spirit-general] script language sample [UPDATE]
+
+Hey all
+
+This is just a heads up that I'm still working on this, and it's almost
+complete. I decided to go with a parse tree instead of an AST, which
+unfortunately added a lot of code to the compilation process, but IMO makes
+the compiler more analogous to the parser and it also seems a bit easier to
+follow.
+
+I don't know if you'd call this a "simple" scripting language sample though
+(almost 4000 lines of code).
+
+The language has been dubbed "DScript".
+
+A few features:
+
+* C like syntax (what else?
+* Procedural language that supports both script defined and host environment
+functions.
+* Multi-dimensional arrays.
+* 3 basic types: string, int, and double
+* Variables are typeless
+* Language defined local and global variables
+	- %var (local variable, gets cleaned up at exit of current function)
+	- $var (global variable, sticks around until manually deleted)
+
+Some notes on implementation:
+
+* Uses nothing but Spirit, Boost and the STD C++ library. Should be fully
+platform independent.
+* Embedding into a host application is dead simple:
+	a) Include the source files in your project (or compile it into a
+.lib file and link with that)
+	b) Include the dscript.hpp header
+	c) create a dscript::context object
+	d) call the methods of that context object to load and execute
+scripts.
+* Script code is compiled into byte-code that is executed by the runtime.
+* Script files may be compiled into a byte-code binary format for faster
+loading time
+* dscript::context objects are fully encapsulated. You can have any number
+created at any time.
+* Script functions may be called by the host application through the context
+object.
+* Errors generated are output to a specified std::ostream
+
+Hopefully this should be done in the next couple of days, and then I'm going
+to clean it up and prepare it for release.
+I'm planning on making it dependent on spirit 1.8, so at the very least I'll
+be waiting until that release before this "goes gold".
+
+DScript will be released under the GNU Public License (GPL)
+
+Once fully finished, I'll submit it to the spirit application repository,
+and if it's good enough, maybe you guys could package it as an example.
+
+Bryan Ross
+me@daerid.com
+
