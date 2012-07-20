@@ -1,11 +1,24 @@
-Subject:
-[Spirit-general] Scripting Language
-From:
-"Bryan Ross" <me@daerid.com>
-Date:
-Wed, 19 Nov 2003 18:46:04 -0800
-To:
-<spirit-general@lists.sourceforge.net>
+dscript
+=======
+
+This is a little scripting language I put together when I was heavy
+into c++ development and studying compiler theory. I haven't
+touched this code since it was finished up and pushed out to the
+boost.spirit mailing list in November of 2003. Below are the original
+emails announcing its completion.
+
+**Note:** This does _not_ build on current compilers. The version of
+boost that it uses is horribly outdated. I'm going to try to update
+this to current c++ compilers (g++, vs 2010/2012), but no guarantees
+
+-------------------------------------------------------------------------------
+
+```
+Subject: [Spirit-general] Scripting Language
+From: "Bryan Ross" ~~<me@daerid.com>~~ bryanjamesross@gmail.com
+Date: Wed, 19 Nov 2003 18:46:04 -0800
+To: <spirit-general@lists.sourceforge.net>
+```
 
 Hey all.
 
@@ -34,13 +47,18 @@ PS: Joel, I've updated the files all to sport a very slightly modified
 version of the spirit license.
 
 Bryan Ross
-me@daerid.com
+~~me@daerid.com~~
+bryanjamesross@gmail.com
 
+-------------------------------------------------------------------------------
+
+```
 -----Original Message-----
 From: Bryan Ross [me@daerid.com]
 Sent: Thursday, November 13, 2003 10:15 AM
 To: spirit-general@lists.sourceforge.net
 Subject: [Spirit-general] script language sample [UPDATE]
+```
 
 Hey all
 
@@ -59,7 +77,7 @@ A few features:
 
 * C like syntax (what else?
 * Procedural language that supports both script defined and host environment
-functions.
+  functions.
 * Multi-dimensional arrays.
 * 3 basic types: string, int, and double
 * Variables are typeless
@@ -72,19 +90,18 @@ Some notes on implementation:
 * Uses nothing but Spirit, Boost and the STD C++ library. Should be fully
 platform independent.
 * Embedding into a host application is dead simple:
-	a) Include the source files in your project (or compile it into a
-.lib file and link with that)
-	b) Include the dscript.hpp header
-	c) create a dscript::context object
-	d) call the methods of that context object to load and execute
-scripts.
+    1. Include the source files in your project (or compile it into a .lib
+       file and link with that)
+    2. Include the dscript.hpp header
+    3. create a dscript::context object
+    4. call the methods of that context object to load and execute scripts.
 * Script code is compiled into byte-code that is executed by the runtime.
 * Script files may be compiled into a byte-code binary format for faster
-loading time
+  loading time
 * dscript::context objects are fully encapsulated. You can have any number
-created at any time.
+  created at any time.
 * Script functions may be called by the host application through the context
-object.
+  object.
 * Errors generated are output to a specified std::ostream
 
 Hopefully this should be done in the next couple of days, and then I'm going
@@ -98,5 +115,6 @@ Once fully finished, I'll submit it to the spirit application repository,
 and if it's good enough, maybe you guys could package it as an example.
 
 Bryan Ross
-me@daerid.com
+~~me@daerid.com~~
+bryanjamesross@gmail.com
 
