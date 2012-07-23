@@ -35,7 +35,7 @@ namespace dscript
     {
         bool operator()(string_table::entry left,string_table::entry right) const
         {
-            return stricmp(left,right) < 0;
+            return _stricmp(left,right) < 0;
         }
     };
 
