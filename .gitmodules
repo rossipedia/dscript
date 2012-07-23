@@ -7,3 +7,9 @@
 [submodule "boost/config"]
 	path = boost/config
 	url = git://github.com/boost-lib/config.git
+[submodule "boost/spirit"]
+	path = boost/spirit
+	url = git://github.com/boost-lib/spirit.git
+[submodule "boost/spirit_classic"]
+	path = boost/spirit_classic
+	url = git://github.com/boost-lib/spirit_classic.git
