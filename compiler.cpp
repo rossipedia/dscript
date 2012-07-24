@@ -56,7 +56,7 @@ struct compile_context
     string_table& strings;
     float_table& floats;
 
-    size_t func_depth;    
+    size_t func_depth;
     size_t loop_count;
 
     stack< stack<size_t> > break_indices;
@@ -82,14 +82,19 @@ struct skip_grammar : public boost::spirit::classic::grammar<skip_grammar>
                 =   space_p
                 |   comment_p("//")
                 ;
-            
-            #ifdef BOOST_SPIRIT_DEBUG
-            BOOST_SPIRIT_DEBUG_RULE(skip);
-            #endif
+
+            debug();
         }
-        
+
 		rule<ScanT> skip;
-        
+
+        void debug()
+        {
+#ifdef BOOST_SPIRIT_DEBUG
+            BOOST_SPIRIT_DEBUG_RULE(skip);
+#endif
+        }
+
 		const rule<ScanT>& start()
         {
             return skip;
@@ -159,7 +164,7 @@ struct grammar : public boost::spirit::classic::grammar<grammar>
         rule<ScanT, parser_tag<func_call_id> > func_call;
         rule<ScanT, parser_tag<ident_id> > ident;
         rule<ScanT, parser_tag<expr_id> > expr;
-        rule<ScanT, parser_tag<func_decl_id> > func_decl;        
+        rule<ScanT, parser_tag<func_decl_id> > func_decl;
         rule<ScanT, parser_tag<var_id> > var;
         rule<ScanT, parser_tag<lvar_id> > lvar;
         rule<ScanT, parser_tag<gvar_id> > gvar;
@@ -206,7 +211,7 @@ struct grammar : public boost::spirit::classic::grammar<grammar>
             BOOST_SPIRIT_DEBUG_RULE(func_call);
             BOOST_SPIRIT_DEBUG_RULE(ident);
             BOOST_SPIRIT_DEBUG_RULE(expr);
-            BOOST_SPIRIT_DEBUG_RULE(func_decl);        
+            BOOST_SPIRIT_DEBUG_RULE(func_decl);
             BOOST_SPIRIT_DEBUG_RULE(var);
             BOOST_SPIRIT_DEBUG_RULE(lvar);
             BOOST_SPIRIT_DEBUG_RULE(gvar);
@@ -337,13 +342,13 @@ struct grammar : public boost::spirit::classic::grammar<grammar>
                 ;
 
             func_call
-                =   ident >> discard_node_d[ ch_p('(') ] 
+                =   ident >> discard_node_d[ ch_p('(') ]
                         >> infix_node_d[ !list_p(expr,',') ]
                         >> discard_node_d[ ch_p(')') ]
                 ;
 
             ident
-                =   lexeme_d[ 
+                =   lexeme_d[
                         token_node_d[
                             alpha_p >> *(alnum_p | '_' | ':')
                         ]
@@ -360,7 +365,7 @@ struct grammar : public boost::spirit::classic::grammar<grammar>
                 ;
 
             bitwise_expr
-                =   equality_expr >> *(bitwise_op >> equality_expr) 
+                =   equality_expr >> *(bitwise_op >> equality_expr)
                 ;
 
             bitwise_op
@@ -383,7 +388,7 @@ struct grammar : public boost::spirit::classic::grammar<grammar>
                 ;
 
             compare_op
-                =   longest_d[ 
+                =   longest_d[
                         ch_p('<')
                         |   '>'
                         |   "<="
@@ -455,18 +460,18 @@ struct grammar : public boost::spirit::classic::grammar<grammar>
                 ;
 
             int_const
-                =   lexeme_d[ 
-                        token_node_d[ 
-                            "0x" >> uint_parser<unsigned, 16, 1, 8>() 
-                        ] 
+                =   lexeme_d[
+                        token_node_d[
+                            "0x" >> uint_parser<unsigned, 16, 1, 8>()
+                        ]
                     ]
                 |   int_p
                 ;
 
             str_const
                 =   lexeme_d[
-                        token_node_d[ 
-                            '"' >> *(c_escape_ch_p - '"') >> '"' 
+                        token_node_d[
+                            '"' >> *(c_escape_ch_p - '"') >> '"'
                         ]
                     ]
                 ;
@@ -481,7 +486,7 @@ struct grammar : public boost::spirit::classic::grammar<grammar>
 
             lvar
                 =   lexeme_d[
-                        token_node_d[                        
+                        token_node_d[
                             ch_p('%') >> alpha_p >> *(alnum_p | '_' | ':')
                         ]
                     ]
@@ -497,8 +502,8 @@ struct grammar : public boost::spirit::classic::grammar<grammar>
                 ;
 
             func_decl
-                =   discard_node_d[ str_p("function") ] >> ident 
-                    >> discard_node_d[ ch_p('(') ] 
+                =   discard_node_d[ str_p("function") ] >> ident
+                    >> discard_node_d[ ch_p('(') ]
                         >> infix_node_d[ !list_p(lvar,',') ]
                     >> discard_node_d[ ch_p(')') ]
                     >> stmt_block
@@ -506,7 +511,7 @@ struct grammar : public boost::spirit::classic::grammar<grammar>
 
             debug();
         }
-        
+
         const rule<ScanT,parser_tag<stmt_list_id> >& start()
         {
             return stmt_list;
@@ -518,7 +523,7 @@ struct grammar : public boost::spirit::classic::grammar<grammar>
 // The DScript compiler framework.
 //
 // These functions take the parse tree generated by spirit's pt_parse function
-// and use the information in it to create the codeblock, which is akin to 
+// and use the information in it to create the codeblock, which is akin to
 // assembly language.
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -533,7 +538,7 @@ template<typename TreeIterT>
 void compile_func_call(const TreeIterT& iter, compile_context& ctx)
 {
     assert(iter->value.id() == func_call_id);
-    
+
     // Are there params to be pushed?
     if(iter->children.size() > 1)
     {
@@ -636,9 +641,9 @@ void compile_var(const TreeIterT& iter, compile_context& ctx)
     else
     {
         assert(iter->children.size() == 2);
-        
+
         TreeIterT child = iter->children.begin();
-        
+
         // the prefix
         typedef TreeIterT::value_type node_t;
         const node_t& leaf = get_first_leaf(*child);
@@ -661,11 +666,11 @@ template<typename TreeIterT>
 void compile_expr_atom(const TreeIterT& iter, compile_context& ctx)
 {
     assert(iter->value.id() == expr_atom_id);
-    
+
     // gonna be a constant, var, or expr
     // no children
     assert(iter->children.size() == 1);
-    
+
     // the atom!
     const TreeIterT& atom = iter->children.begin();
 
@@ -697,13 +702,13 @@ void compile_inc_dec_expr(const TreeIterT& iter, compile_context& ctx)
     assert(iter->children.size() == 2); // op and var
     // get a node type
     typedef TreeIterT::value_type node_t;
-    
+
     // post or pre inc/dec?
     if(iter->children.begin()->value.id() == var_id)
     {
         // post
         assert((iter->children.begin() + 1)->value.id() == inc_dec_op_id);
-        
+
         const node_t& op = get_first_leaf(*(iter->children.begin()+1));
         const node_t& var = get_first_leaf(*(iter->children.begin()));
 
@@ -711,7 +716,7 @@ void compile_inc_dec_expr(const TreeIterT& iter, compile_context& ctx)
         string var_token(var.value.begin(),var.value.end());
 
         compile_var(iter->children.begin(),ctx);
-        
+
         if(op_token[0] == '+') // increment
             ctx.code.push_back(op_inc_var);
         else
@@ -724,13 +729,13 @@ void compile_inc_dec_expr(const TreeIterT& iter, compile_context& ctx)
         // pre
         assert((iter->children.begin())->value.id() == inc_dec_op_id);
         assert((iter->children.begin()+1)->value.id() == var_id);
-        
+
         const node_t& op = get_first_leaf(*(iter->children.begin()));
         const node_t& var = get_first_leaf(*(iter->children.begin()+1));
-        
+
         string op_token(op.value.begin(),op.value.end());
         string var_token(var.value.begin(),var.value.end());
-        
+
         if(op_token[0] == '+')
             ctx.code.push_back(op_inc_var);
         else // decrement
@@ -746,7 +751,7 @@ void compile_unary_expr(const TreeIterT& iter, compile_context& ctx)
 {
     assert(iter->value.id() == unary_expr_id);
     // This compiles all the !x ~x +x -x expr
-    
+
     // get a node type
     typedef TreeIterT::value_type node_t;
 
@@ -964,7 +969,7 @@ void compile_equality_expr(const TreeIterT& iter, compile_context& ctx)
 
     // get a node type
     typedef TreeIterT::value_type node_t;
-    
+
     TreeIterT sub_expr = iter->children.begin();
     TreeIterT end = iter->children.end();
     // compile the left sub_expr
@@ -1001,7 +1006,7 @@ void compile_bitwise_expr(const TreeIterT& iter, compile_context& ctx)
 
     // get a node type
     typedef TreeIterT::value_type node_t;
-    
+
     TreeIterT sub_expr = iter->children.begin();
     TreeIterT end = iter->children.end();
     // compile the left sub_expr
@@ -1072,7 +1077,7 @@ template<typename TreeIterT>
 void compile_func_decl(const TreeIterT& iter, compile_context& ctx)
 {
     assert(iter->value.id() == func_decl_id);
-    
+
     // increment the function depth
     ++ctx.func_depth;
 
@@ -1083,11 +1088,12 @@ void compile_func_decl(const TreeIterT& iter, compile_context& ctx)
     ctx.code.push_back(ctx.strings.insert(name));
     size_t resolve = ctx.code.size();
     ctx.code.push_back(0); // unknown right now, will use resolve later to set it
-    
+
     // ctx.instr_count += 3; // one for op, one for name, and one for instr_count
 
     TreeIterT arg = iter->children.begin() + 1;
-    for(; (arg->value.id() != stmt_block_id); ++arg)
+    TreeIterT end = iter->children.end();
+    for(; arg != end && (arg->value.id() != stmt_block_id); ++arg)
     {
         assert(arg->value.id() == lvar_id);
         const TreeIterT::value_type& leaf = get_first_leaf(*arg);
@@ -1098,14 +1104,17 @@ void compile_func_decl(const TreeIterT& iter, compile_context& ctx)
         ctx.code.push_back(ctx.strings.insert(arg_name));
     }
     // we should have a stmt_block
-    assert(arg != iter->children.end());
+    if(arg != end)
+    {
+        assert(arg != iter->children.end());
 
-    // good, compile the stmt_list
-    compile_stmt_block(arg,ctx);
+        // good, compile the stmt_list
+        compile_stmt_block(arg,ctx);
+    }
 
     // in case there's no explicit return statement
     ctx.code.push_back(op_return);
-    
+
     // resolve now the offset of the end of the function
     ctx.code[resolve] = ctx.code.size();
 
@@ -1119,9 +1128,9 @@ void compile_return_stmt(const TreeIterT& iter, compile_context& ctx)
     assert(iter->value.id() == return_stmt_id);
     // The only child (if there is one) is going to be a expr
     if(iter->children.size() > 1)
-    {   
+    {
         assert(iter->children.size() == 2);
-        TreeIterT expr = iter->children.begin() + 1;        
+        TreeIterT expr = iter->children.begin() + 1;
         compile_expr(expr,ctx);
         // store it in the return value register
         ctx.code.push_back(op_store_ret);
@@ -1137,7 +1146,7 @@ void compile_inc_dec_stmt(const TreeIterT& iter, compile_context& ctx)
     TreeIterT var = (iter->children.begin()->value.id() == var_id) ? (iter->children.begin()) : (iter->children.begin()+1);
     string var_token(get_first_leaf(*var).value.begin(),get_first_leaf(*var).value.end());
     string op_token(get_first_leaf(*op).value.begin(),get_first_leaf(*op).value.end());
-    
+
     if(op_token[0] == '+')
         ctx.code.push_back(op_inc_var);
     else
@@ -1149,7 +1158,7 @@ template<typename TreeIterT>
 void compile_assign_stmt(const TreeIterT& iter, compile_context& ctx)
 {
     assert(iter->value.id() == assign_stmt_id);
-    
+
     // as assign statement either has 3 nodes, or 1
     assert(iter->children.size() == 3 || iter->children.size() == 1);
     if(iter->children.size() == 3)
@@ -1158,7 +1167,7 @@ void compile_assign_stmt(const TreeIterT& iter, compile_context& ctx)
 
         const node_t& op = get_first_leaf(iter->children[1]);
         const TreeIterT& expr = iter->children.begin() + 2;
-        
+
         TreeIterT var = iter->children.begin();
         string var_tok(
                 get_first_leaf(*var).value.begin(),
@@ -1179,10 +1188,10 @@ void compile_assign_stmt(const TreeIterT& iter, compile_context& ctx)
 
         // now, compile the expression
         compile_expr(expr,ctx);
-        
+
         // second, check what kind of op it is:
         string op_tok(op.value.begin(),op.value.end());
-        
+
         // op_code
         op_code opcode = op_invalid;
         bool do_var = var->children.size() == 1;
@@ -1294,7 +1303,7 @@ void compile_while_stmt(const TreeIterT& iter, compile_context& ctx)
     assert(iter->value.id() == while_stmt_id);
     // has to have 2 children
     assert(iter->children.size() == 2);
-    
+
     // increase the loop count
     ++ctx.loop_count;
 
@@ -1317,16 +1326,16 @@ void compile_while_stmt(const TreeIterT& iter, compile_context& ctx)
     // compile the body statement(s)
     TreeIterT stmt = expr + 1;
     compile_stmt(stmt,ctx);
-    
+
     // jump back to the beginning
     ctx.code.push_back(op_jmp);
     ctx.code.push_back(continue_index);
 
     // this is where the loop breaks
     size_t break_index = ctx.code.size();
-    
+
     // resolve the break and continue points
-    
+
     // continue indices
     while(ctx.continue_indices.top().size() > 0)
     {
@@ -1390,7 +1399,7 @@ void compile_for_stmt(const TreeIterT& iter, compile_context& ctx)
 
     // inc loop count
     ++ctx.loop_count;
-    
+
     TreeIterT child = iter->children.begin();
     TreeIterT end = iter->children.end();
 
@@ -1404,10 +1413,10 @@ void compile_for_stmt(const TreeIterT& iter, compile_context& ctx)
         compile_assign_stmt(iter->children.begin(),ctx);
         ++child;
     }
-    
+
     assert(child->value.id() == for_stmt_id); // first ;
     ++child;
-    
+
     // loop start
     size_t test_expr_start = ctx.code.size();
     if(child->value.id() == expr_id)
@@ -1437,10 +1446,10 @@ void compile_for_stmt(const TreeIterT& iter, compile_context& ctx)
 
     // compile the body statement
     compile_stmt(child,ctx);
-    
+
     // now we're at the continue point
     size_t continue_index = ctx.code.size();
-    
+
     // resolve all the continue points
     while(ctx.continue_indices.top().size() > 0)
     {
@@ -1459,7 +1468,7 @@ void compile_for_stmt(const TreeIterT& iter, compile_context& ctx)
     // Jump unconditionally to the loop start
     ctx.code.push_back(op_jmp);
     ctx.code.push_back(test_expr_start);
-    
+
     // Now we're at the break point (end of the loop), so resolve 'em
     while(ctx.break_indices.top().size() > 0)
     {
@@ -1564,21 +1573,21 @@ codeblock_t compile(const string& code,string_table& strings,float_table& floats
     compile_context ctx(strings,floats);
     // Attempt to parse the string
     typedef position_iterator<string::const_iterator> iter_t;
-    
-    dscript::grammar g;
-    dscript::skip_grammar s;
+
+    dscript::grammar grammar;
+    dscript::skip_grammar skip;
 
 #ifdef BOOST_SPIRIT_DEBUG
-    BOOST_SPIRIT_DEBUG_GRAMMAR(g);
-    BOOST_SPIRIT_DEBUG_GRAMMAR(s);
+    BOOST_SPIRIT_DEBUG_GRAMMAR(grammar);
+    BOOST_SPIRIT_DEBUG_GRAMMAR(skip);
 #endif
 
     iter_t first(code.begin(),code.end());
     iter_t last;
 
     typedef node_iter_data_factory<> fact_t;
-    tree_parse_info<iter_t,fact_t> info = pt_parse<fact_t>(first,last,g,s);
-    if(info.full)
+    tree_parse_info<iter_t,fact_t> info = pt_parse<fact_t>(first, last, grammar, skip);
+    if(info.match)
     {
 		if(info.length > 0)
 		{
@@ -1590,7 +1599,7 @@ codeblock_t compile(const string& code,string_table& strings,float_table& floats
 				>::parse_node_t
 			> node_t;
 			typedef vector<node_t>::const_iterator tree_iter_t;
-        
+
 			try
 			{
 				compile_parse_tree(info.trees,ctx);
@@ -1621,3 +1630,4 @@ codeblock_t compile(const string& code,string_table& strings,float_table& floats
 }
 
 } // end namespace dscript
+
