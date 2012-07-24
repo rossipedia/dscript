@@ -41,6 +41,11 @@
 #endif//feof
 ////////////////////////////////////////////////////////////////////////////////
 
+#ifdef __GNUC__
+#include <strings.h>
+#endif
+
+
 #define ARGS const dscript::args_t& args,dscript::context& ctx
 
 using namespace std;
@@ -60,15 +65,22 @@ namespace stdlib
                 )
             );
     }
+
     void stricmp(ARGS)
     {
         ctx.set_return(
-            ::strcmp(
+#ifdef _MSC_VER
+            ::_stricmp(
+#endif
+#ifdef __GNUC__
+            ::strcasecmp(
+#endif
                 args[0].to_str().c_str(),
                 args[1].to_str().c_str()
                 )
             );
     }
+
     void strncmp(ARGS)
     {
         ctx.set_return(
@@ -83,7 +95,12 @@ namespace stdlib
     void strnicmp(ARGS)
     {
         ctx.set_return(
+#ifdef _MSC_VER
             ::_strnicmp(
+#endif
+#ifdef __GNUC__
+            ::strncasecmp(
+#endif
                 args[0].to_str().c_str(),
                 args[1].to_str().c_str(),
                 args[2].to_int()
@@ -176,7 +193,7 @@ namespace stdlib
             );
     }
 
-    
+
 
 
     // IO functions
@@ -277,7 +294,7 @@ namespace stdlib
     }
 }
 
-namespace 
+namespace
 {
     void link_string_functions(dscript::context& ctx)
     {
@@ -292,7 +309,7 @@ namespace
             &dscript::stdlib::stricmp,
             2,2,"(%str1,%str2)"
             );
-        
+
         ctx.link_function(
             "strncmp",
             &dscript::stdlib::strncmp,
@@ -355,7 +372,7 @@ namespace
             &dscript::stdlib::atan,
             1,1,"(%num)"
             );
-        
+
         ctx.link_function(
             "pow",
             &dscript::stdlib::pow,

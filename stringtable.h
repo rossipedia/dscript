@@ -17,6 +17,13 @@
 #include <set>
 ////////////////////////////////////////////////////////////////////////////////
 
+////////////////////////////////////////////////////////////////////////////////
+// For GCC
+#ifdef __GNUC__
+#include <strings.h>
+#endif
+////////////////////////////////////////////////////////////////////////////////
+
 namespace dscript
 {
     /// Maintains a list of strings in use by the runtime
@@ -35,7 +42,13 @@ namespace dscript
     {
         bool operator()(string_table::entry left,string_table::entry right) const
         {
+#ifdef _MSC_VER
             return _stricmp(left,right) < 0;
+#endif
+
+#ifdef __GNUC__
+            return strcasecmp(left, right) < 0;
+#endif
         }
     };
 

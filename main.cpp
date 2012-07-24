@@ -14,6 +14,5 @@ int main(int argc,char* argv[])
     ctx.compile("test.txt");
     ctx.exec_compiled("test.txt");
 
-    getchar();
     return 0;
 }

@@ -557,7 +557,7 @@ void compile_func_call(const TreeIterT& iter, compile_context& ctx)
         }
     }
     // first node is the identifier
-    const TreeIterT::value_type& ident = get_first_leaf(*iter);
+    const typename TreeIterT::value_type& ident = get_first_leaf(*iter);
     assert(ident.value.id() == ident_id);
     // Call the function
     ctx.code.push_back(op_call_func);
@@ -570,7 +570,7 @@ void compile_constant(const TreeIterT& iter, compile_context& ctx)
 {
     assert(iter->value.id() == constant_id);
     // the child holds the actual type of constant
-    const TreeIterT::value_type& lit = get_first_leaf(*iter);
+    const typename TreeIterT::value_type& lit = get_first_leaf(*iter);
     string val(lit.value.begin(),lit.value.end());
     switch(lit.value.id().to_long())
     {
@@ -632,7 +632,7 @@ void compile_var(const TreeIterT& iter, compile_context& ctx)
     if(iter->children.size() == 1)
     {
         // push the variable's value
-        typedef TreeIterT::value_type node_t;
+        typedef typename TreeIterT::value_type node_t;
         const node_t& leaf = get_first_leaf(*iter);
         string token(leaf.value.begin(),leaf.value.end());
         ctx.code.push_back(op_push_var);
@@ -645,7 +645,7 @@ void compile_var(const TreeIterT& iter, compile_context& ctx)
         TreeIterT child = iter->children.begin();
 
         // the prefix
-        typedef TreeIterT::value_type node_t;
+        typedef typename TreeIterT::value_type node_t;
         const node_t& leaf = get_first_leaf(*child);
         string pref_token(leaf.value.begin(),leaf.value.end());
         // push the name of the variable as a string
@@ -701,7 +701,7 @@ void compile_inc_dec_expr(const TreeIterT& iter, compile_context& ctx)
     assert(iter->value.id() == inc_dec_expr_id);
     assert(iter->children.size() == 2); // op and var
     // get a node type
-    typedef TreeIterT::value_type node_t;
+    typedef typename TreeIterT::value_type node_t;
 
     // post or pre inc/dec?
     if(iter->children.begin()->value.id() == var_id)
@@ -753,7 +753,7 @@ void compile_unary_expr(const TreeIterT& iter, compile_context& ctx)
     // This compiles all the !x ~x +x -x expr
 
     // get a node type
-    typedef TreeIterT::value_type node_t;
+    typedef typename TreeIterT::value_type node_t;
 
     // If we have a unary op
     TreeIterT i = iter->children.begin();
@@ -807,7 +807,7 @@ void compile_mul_expr(const TreeIterT& iter, compile_context& ctx)
     assert(iter->children.size() % 2 == 1);
 
     // get a node type
-    typedef TreeIterT::value_type node_t;
+    typedef typename TreeIterT::value_type node_t;
 
     TreeIterT sub_expr = iter->children.begin();
     TreeIterT end = iter->children.end();
@@ -847,7 +847,7 @@ void compile_add_expr(const TreeIterT& iter, compile_context& ctx)
     assert(iter->children.size() % 2 == 1);
 
     // get a node type
-    typedef TreeIterT::value_type node_t;
+    typedef typename TreeIterT::value_type node_t;
 
     TreeIterT sub_expr = iter->children.begin();
     TreeIterT end = iter->children.end();
@@ -887,7 +887,7 @@ void compile_shift_expr(const TreeIterT& iter, compile_context& ctx)
     assert(iter->children.size() % 2 == 1);
 
     // get a node type
-    typedef TreeIterT::value_type node_t;
+    typedef typename TreeIterT::value_type node_t;
 
     TreeIterT sub_expr = iter->children.begin();
     TreeIterT end = iter->children.end();
@@ -924,7 +924,7 @@ void compile_compare_expr(const TreeIterT& iter, compile_context& ctx)
     assert(iter->children.size() % 2 == 1);
 
     // get a node type
-    typedef TreeIterT::value_type node_t;
+    typedef typename TreeIterT::value_type node_t;
 
     TreeIterT sub_expr = iter->children.begin();
     TreeIterT end = iter->children.end();
@@ -968,7 +968,7 @@ void compile_equality_expr(const TreeIterT& iter, compile_context& ctx)
     assert(iter->children.size() % 2 == 1);
 
     // get a node type
-    typedef TreeIterT::value_type node_t;
+    typedef typename TreeIterT::value_type node_t;
 
     TreeIterT sub_expr = iter->children.begin();
     TreeIterT end = iter->children.end();
@@ -1005,7 +1005,7 @@ void compile_bitwise_expr(const TreeIterT& iter, compile_context& ctx)
     assert(iter->children.size() % 2 == 1);
 
     // get a node type
-    typedef TreeIterT::value_type node_t;
+    typedef typename TreeIterT::value_type node_t;
 
     TreeIterT sub_expr = iter->children.begin();
     TreeIterT end = iter->children.end();
@@ -1045,7 +1045,7 @@ void compile_expr(const TreeIterT& iter, compile_context& ctx)
     assert(iter->children.size() % 2 == 1);
 
     // get a node type
-    typedef TreeIterT::value_type node_t;
+    typedef typename TreeIterT::value_type node_t;
 
     TreeIterT sub_expr = iter->children.begin();
     TreeIterT end = iter->children.end();
@@ -1081,7 +1081,7 @@ void compile_func_decl(const TreeIterT& iter, compile_context& ctx)
     // increment the function depth
     ++ctx.func_depth;
 
-    const TreeIterT::value_type& ident = get_first_leaf(*iter);
+    const typename TreeIterT::value_type& ident = get_first_leaf(*iter);
     string name(ident.value.begin(),ident.value.end());
     // start the function declaration
     ctx.code.push_back(op_decl_func);
@@ -1096,7 +1096,7 @@ void compile_func_decl(const TreeIterT& iter, compile_context& ctx)
     for(; arg != end && (arg->value.id() != stmt_block_id); ++arg)
     {
         assert(arg->value.id() == lvar_id);
-        const TreeIterT::value_type& leaf = get_first_leaf(*arg);
+        const typename TreeIterT::value_type& leaf = get_first_leaf(*arg);
         // out << "op_pop_param " << string(leaf.value.begin(),leaf.value.end()) << endl;
         // ctx.instr_count += 2; // one for op, one for operand
         string arg_name(leaf.value.begin(),leaf.value.end());
@@ -1163,7 +1163,7 @@ void compile_assign_stmt(const TreeIterT& iter, compile_context& ctx)
     assert(iter->children.size() == 3 || iter->children.size() == 1);
     if(iter->children.size() == 3)
     {
-        typedef TreeIterT::value_type node_t;
+        typedef typename TreeIterT::value_type node_t;
 
         const node_t& op = get_first_leaf(iter->children[1]);
         const TreeIterT& expr = iter->children.begin() + 2;
@@ -1257,7 +1257,7 @@ void compile_if_stmt(const TreeIterT& iter, compile_context& ctx)
     assert(iter->value.id() == if_stmt_id);
 
     // Get a node type
-    typedef TreeIterT::value_type node_t;
+    typedef typename TreeIterT::value_type node_t;
 
     // only gonna have 2 or 3 children, that's all we can have
     assert(iter->children.size() >= 2 && iter->children.size() <= 3);
@@ -1562,8 +1562,8 @@ template<typename TreeNodeT>
 void compile_parse_tree(const TreeNodeT& tree,compile_context& ctx)
 {
     // start from the top
-    TreeNodeT::const_iterator iter = tree.begin();
-	compile_stmt_list(iter,ctx);
+    typename TreeNodeT::const_iterator iter = tree.begin();
+    compile_stmt_list(iter,ctx);
 }
 
 // compile a string into a codeblock, using the passed string and float table

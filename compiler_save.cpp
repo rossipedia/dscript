@@ -12,6 +12,7 @@
 // Standard Library Include Files
 #include <iostream>
 #include <string>
+#include <cstring>
 #include <fstream>
 #include <map>
 ////////////////////////////////////////////////////////////////////////////////
@@ -28,7 +29,7 @@
 
 using namespace std;
 
-namespace 
+namespace
 {
     /// Read an element from a stream
     template<typename TypeT>
@@ -52,7 +53,7 @@ codeblock_t load_compiled_file(const string& filename,string_table& strings,floa
         throw std::runtime_error(filename + " could not be found.");
 
     // read in the dsc tag
-    char dsc_tag[4];
+    char dsc_tag[4] = { '\0', };
     read_elem(file,dsc_tag,4);
     if(dsc_tag[3] != '\0')
         throw std::runtime_error(filename + " is not a valid DSC file");
@@ -60,7 +61,7 @@ codeblock_t load_compiled_file(const string& filename,string_table& strings,floa
         throw std::runtime_error(filename + " is not a valid DSC file");
 
     // read the instruction count
-    size_t instr_count;
+    size_t instr_count = 0;
     read_elem(file,&instr_count);
     // allocate a buffer for the instructions
     boost::scoped_array<unsigned int> buffer(new unsigned int[instr_count]);
@@ -79,7 +80,7 @@ codeblock_t load_compiled_file(const string& filename,string_table& strings,floa
     for(size_t i = 0; i < count; ++i)
     {
         // read the length of the string
-        size_t len;
+        size_t len = 0;
         read_elem(file,&len);
 
         // read the string
@@ -91,7 +92,7 @@ codeblock_t load_compiled_file(const string& filename,string_table& strings,floa
         string_table::entry ste = strings.insert(buf.get());
 
         // now read how many offsets this string has
-        size_t offset_count;
+        size_t offset_count = 0;
         read_elem(file,&offset_count);
         // read each offset and set it to the ste
         for(size_t off = 0; off < offset_count; ++off)
@@ -116,7 +117,7 @@ codeblock_t load_compiled_file(const string& filename,string_table& strings,floa
         float_table::entry fte = floats.insert(d);
 
         // now read how many offsets this float has
-        size_t offset_count;
+        size_t offset_count = 0;
         read_elem(file,&offset_count);
         // read each offset and set it to the fte
         for(size_t off = 0; off < offset_count; ++off)

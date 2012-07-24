@@ -13,6 +13,7 @@
 #include <string>
 #include <algorithm>
 #include <iostream>
+#include <iterator>
 #include <iomanip>
 #include <sstream>
 #include <fstream>
@@ -27,7 +28,7 @@
 using namespace std;
 using namespace dscript;
 
-context::context() : log_out(0) 
+context::context() : log_out(0)
 {
 }
 
@@ -96,8 +97,8 @@ void context::set_global(const string& name,const value& val)
 value context::get_local(const string& name)
 {
     if(
-        runtime.m_callstack.size() > 0 && 
-        name.length() > 0 && 
+        runtime.m_callstack.size() > 0 &&
+        name.length() > 0 &&
         name[0] == '%'
         )
     {
@@ -116,8 +117,8 @@ value context::get_local(const string& name)
 void context::set_local(const string& name, const value& val)
 {
         if(
-        runtime.m_callstack.size() > 0 && 
-        name.length() > 0 && 
+        runtime.m_callstack.size() > 0 &&
+        name.length() > 0 &&
         name[0] == '%'
         )
     {
@@ -140,7 +141,7 @@ value context::call(const string& func,const args_t& args)
     runtime.m_return_val.clear();
     runtime.m_param_stack.clear();
 
-    func_table::entry* e = 
+    func_table::entry* e =
         runtime.functions.find(
             runtime.strings.insert(func)
             );
@@ -207,7 +208,7 @@ void dump_asm(const codeblock_t& codeblock,ostream& out)
                 ++off;
                 // output the offset
                 out << setw(5) << setfill('0') << off << ':';
-                // out the string                
+                // out the string
                 out << codeblock[off].get_str() << endl;
             }
             break;

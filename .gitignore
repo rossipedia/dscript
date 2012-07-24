@@ -57,3 +57,8 @@ packages/
 *crunch*.local.xml
 
 *.dsc
+*.o
+*.dep
+dscript.exe
+*.exe
+*.stackdump

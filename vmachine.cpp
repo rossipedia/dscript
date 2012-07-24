@@ -12,6 +12,7 @@
 // Standard Library Includes
 #include <algorithm>
 #include <sstream>
+#include <stdexcept>
 ////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -151,10 +152,10 @@ void vmachine::execute(
 	        break;
 
         case op_push_var_value:
-            // replace the top of the stack with the value of 
+            // replace the top of the stack with the value of
             // the variable named by the top of the stack
             {
-                string_table::entry ste = 
+                string_table::entry ste =
                     strings.insert(m_runtime_stack.top().to_str());
                 dictionary_t& dict = (ste[0]=='$') ? globals : stack_frame;
                 m_runtime_stack.top() = dict[ste];
@@ -164,7 +165,7 @@ void vmachine::execute(
 
         case op_load_ret:
             {
-                // push the value in the return 
+                // push the value in the return
                 // register onto the top of the stack
                 m_runtime_stack.push(m_return_val);
                 ++instr;
@@ -228,7 +229,7 @@ void vmachine::execute(
                 // multiply the new top by the popped top
                 // check types (keep int if both are int, otherwise go to flt)
                 if(
-                    top.type == value::type_int && 
+                    top.type == value::type_int &&
                     newtop.type == value::type_int
                     )
                     newtop.intval *= top.intval;
@@ -236,7 +237,7 @@ void vmachine::execute(
                 {
                     newtop.set_type(value::type_flt);
                     newtop.fltval *= top.to_flt();
-                }                
+                }
                 ++instr;
             }
 	        break;
@@ -250,7 +251,7 @@ void vmachine::execute(
                 // divide the new top by the popped top
                 // check types (keep int if both are int, otherwise go to flt)
                 if(
-                    top.type == value::type_int && 
+                    top.type == value::type_int &&
                     newtop.type == value::type_int
                     )
                 {
@@ -263,7 +264,7 @@ void vmachine::execute(
                 {
                     newtop.set_type(value::type_flt);
                     newtop.fltval /= top.to_flt();
-                }                
+                }
                 ++instr;
             }
 	        break;
@@ -291,7 +292,7 @@ void vmachine::execute(
                 // add the new top to the popped top
                 // check types (keep int if both are int, otherwise go to flt)
                 if(
-                    top.type == value::type_int && 
+                    top.type == value::type_int &&
                     newtop.type == value::type_int
                     )
                     newtop.intval += top.intval;
@@ -299,7 +300,7 @@ void vmachine::execute(
                 {
                     newtop.set_type(value::type_flt);
                     newtop.fltval += top.to_flt();
-                }                
+                }
                 ++instr;
             }
 	        break;
@@ -313,7 +314,7 @@ void vmachine::execute(
                 // subtract the popped top from the new top
                 // check types (keep int if both are int, otherwise go to flt)
                 if(
-                    top.type == value::type_int && 
+                    top.type == value::type_int &&
                     newtop.type == value::type_int
                     )
                     newtop.intval -= top.intval;
@@ -321,7 +322,7 @@ void vmachine::execute(
                 {
                     newtop.set_type(value::type_flt);
                     newtop.fltval -= top.to_flt();
-                }                
+                }
                 ++instr;
             }
 	        break;
@@ -376,7 +377,7 @@ void vmachine::execute(
                 value& newtop = m_runtime_stack.top();
                 // check types (keep int if both are int, otherwise go to flt)
                 if(
-                    top.type == value::type_int && 
+                    top.type == value::type_int &&
                     newtop.type == value::type_int
                     )
                     newtop.intval = newtop.intval <= top.intval;
@@ -398,7 +399,7 @@ void vmachine::execute(
                 value& newtop = m_runtime_stack.top();
                 // check types (keep int if both are int, otherwise go to flt)
                 if(
-                    top.type == value::type_int && 
+                    top.type == value::type_int &&
                     newtop.type == value::type_int
                     )
                     newtop.intval = newtop.intval < top.intval;
@@ -420,7 +421,7 @@ void vmachine::execute(
                 value& newtop = m_runtime_stack.top();
                 // check types (keep int if both are int, otherwise go to flt)
                 if(
-                    top.type == value::type_int && 
+                    top.type == value::type_int &&
                     newtop.type == value::type_int
                     )
                     newtop.intval = newtop.intval >= top.intval;
@@ -442,7 +443,7 @@ void vmachine::execute(
                 value& newtop = m_runtime_stack.top();
                 // check types (keep int if both are int, otherwise go to flt)
                 if(
-                    top.type == value::type_int && 
+                    top.type == value::type_int &&
                     newtop.type == value::type_int
                     )
                     newtop.intval = newtop.intval > top.intval;
@@ -464,7 +465,7 @@ void vmachine::execute(
                 value& newtop = m_runtime_stack.top();
                 // check types (keep int if both are int, otherwise go to flt)
                 if(
-                    top.type == value::type_int && 
+                    top.type == value::type_int &&
                     newtop.type == value::type_int
                     )
                     newtop.intval = newtop.intval == top.intval;
@@ -486,7 +487,7 @@ void vmachine::execute(
                 value& newtop = m_runtime_stack.top();
                 // check types (keep int if both are int, otherwise go to flt)
                 if(
-                    top.type == value::type_int && 
+                    top.type == value::type_int &&
                     newtop.type == value::type_int
                     )
                     newtop.intval = newtop.intval != top.intval;
@@ -547,7 +548,7 @@ void vmachine::execute(
                 value& newtop = m_runtime_stack.top();
                 // check types
                 if(
-                    top.type == value::type_int && 
+                    top.type == value::type_int &&
                     newtop.type == value::type_int
                     )
                     newtop.intval = newtop.intval && top.intval;
@@ -569,7 +570,7 @@ void vmachine::execute(
                 value& newtop = m_runtime_stack.top();
                 // check types
                 if(
-                    top.type == value::type_int && 
+                    top.type == value::type_int &&
                     newtop.type == value::type_int
                     )
                     newtop.intval = newtop.intval || top.intval;
@@ -585,7 +586,7 @@ void vmachine::execute(
 
         case op_decl_func:
             {
-                // first thing will be the function name, 
+                // first thing will be the function name,
                 // second will be offset at which function ends
                 ++instr;
                 string_table::entry func_name = instr->get_str();
@@ -593,7 +594,7 @@ void vmachine::execute(
                 int offset = instr->get_int();
                 ++instr; // now points to first instruction of the function
                 instr_iter func_end = begin + offset;
-                
+
                 functions.add_script_func(
                     func_name,
                     begin,
@@ -640,7 +641,7 @@ void vmachine::execute(
             {
                 value v = m_runtime_stack.top();
                 m_runtime_stack.pop();
-                string_table::entry ste = 
+                string_table::entry ste =
                     strings.insert(m_runtime_stack.top().to_str());
                 m_runtime_stack.pop();
                 dictionary_t& dict = (ste[0] == '$') ? globals : stack_frame;
@@ -669,7 +670,7 @@ void vmachine::execute(
             {
                 value val = m_runtime_stack.top();
                 m_runtime_stack.pop();
-                string_table::entry ste = 
+                string_table::entry ste =
                     strings.insert(m_runtime_stack.top().to_str());
                 m_runtime_stack.pop();
                 // set the var's value
@@ -711,7 +712,7 @@ void vmachine::execute(
             {
                 value val = m_runtime_stack.top();
                 m_runtime_stack.pop();
-                string_table::entry ste = 
+                string_table::entry ste =
                     strings.insert(m_runtime_stack.top().to_str());
                 m_runtime_stack.pop();
                 // set the var's value
@@ -753,7 +754,7 @@ void vmachine::execute(
             {
                 value val = m_runtime_stack.top();
                 m_runtime_stack.pop();
-                string_table::entry ste = 
+                string_table::entry ste =
                     strings.insert(m_runtime_stack.top().to_str());
                 m_runtime_stack.pop();
                 // set the var's value
@@ -763,7 +764,7 @@ void vmachine::execute(
                 ++instr;
             }
 	        break;
-        
+
         case op_mod_asn_var:
             // mod a specified variable by a value
             {
@@ -786,7 +787,7 @@ void vmachine::execute(
             {
                 value val = m_runtime_stack.top();
                 m_runtime_stack.pop();
-                string_table::entry ste = 
+                string_table::entry ste =
                     strings.insert(m_runtime_stack.top().to_str());
                 m_runtime_stack.pop();
                 // set the var's value
@@ -828,7 +829,7 @@ void vmachine::execute(
             {
                 value val = m_runtime_stack.top();
                 m_runtime_stack.pop();
-                string_table::entry ste = 
+                string_table::entry ste =
                     strings.insert(m_runtime_stack.top().to_str());
                 m_runtime_stack.pop();
                 // set the var's value
@@ -845,7 +846,7 @@ void vmachine::execute(
 	        break;
 
         case op_sub_asn_var:
-            // subtract a value from a specified variable 
+            // subtract a value from a specified variable
             {
                 ++instr;
                 string_table::entry ste = instr->get_str();
@@ -870,7 +871,7 @@ void vmachine::execute(
             {
                 value val = m_runtime_stack.top();
                 m_runtime_stack.pop();
-                string_table::entry ste = 
+                string_table::entry ste =
                     strings.insert(m_runtime_stack.top().to_str());
                 m_runtime_stack.pop();
                 // set the var's value
@@ -900,7 +901,7 @@ void vmachine::execute(
             {
                 value val = m_runtime_stack.top();
                 m_runtime_stack.pop();
-                string_table::entry ste = 
+                string_table::entry ste =
                     strings.insert(m_runtime_stack.top().to_str());
                 m_runtime_stack.pop();
                 // set the var's value
@@ -930,7 +931,7 @@ void vmachine::execute(
             {
                 value val = m_runtime_stack.top();
                 m_runtime_stack.pop();
-                string_table::entry ste = 
+                string_table::entry ste =
                     strings.insert(m_runtime_stack.top().to_str());
                 m_runtime_stack.pop();
                 // set the var's value
@@ -960,7 +961,7 @@ void vmachine::execute(
             {
                 value val = m_runtime_stack.top();
                 m_runtime_stack.pop();
-                string_table::entry ste = 
+                string_table::entry ste =
                     strings.insert(m_runtime_stack.top().to_str());
                 m_runtime_stack.pop();
                 // set the var's value
@@ -990,7 +991,7 @@ void vmachine::execute(
             {
                 value val = m_runtime_stack.top();
                 m_runtime_stack.pop();
-                string_table::entry ste = 
+                string_table::entry ste =
                     strings.insert(m_runtime_stack.top().to_str());
                 m_runtime_stack.pop();
                 // set the var's value
@@ -1020,11 +1021,11 @@ void vmachine::execute(
             {
                 value val = m_runtime_stack.top();
                 m_runtime_stack.pop();
-                string_table::entry ste = 
+                string_table::entry ste =
                     strings.insert(m_runtime_stack.top().to_str());
                 m_runtime_stack.pop();
                 // set the var's value
-                value& var = 
+                value& var =
                     (ste[0] == '$') ? globals[ste] : stack_frame[ste];
                 var.set_type(value::type_int);
                 var.intval >>= val.to_int();
@@ -1071,7 +1072,7 @@ void vmachine::execute(
         default:
             {
                 stringstream msg;
-                msg << "Unknown op_code encountered: " << 
+                msg << "Unknown op_code encountered: " <<
                     instr->get_int() << flush;
                 throw runtime_error(msg.str());
             }
