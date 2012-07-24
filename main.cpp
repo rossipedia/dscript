@@ -11,8 +11,9 @@ int main(int argc,char* argv[])
     link_stdlib(ctx);
 
     ctx.dump_file(cout, "test.txt");
-    /*ctx.compile("test.txt");
-    ctx.exec_compiled("test.txt");*/
+    ctx.compile("test.txt");
+    ctx.exec_compiled("test.txt");
 
+    getchar();
     return 0;
 }
