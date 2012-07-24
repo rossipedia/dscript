@@ -83,7 +83,7 @@ namespace stdlib
     void strnicmp(ARGS)
     {
         ctx.set_return(
-            ::strnicmp(
+            ::_strnicmp(
                 args[0].to_str().c_str(),
                 args[1].to_str().c_str(),
                 args[2].to_int()

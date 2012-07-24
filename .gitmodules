@@ -13,3 +13,30 @@
 [submodule "boost/spirit_classic"]
 	path = boost/spirit_classic
 	url = git://github.com/boost-lib/spirit_classic.git
+[submodule "boost/core"]
+	path = boost/core
+	url = git://github.com/boost-lib/core.git
+[submodule "boost/type_traits"]
+	path = boost/type_traits
+	url = git://github.com/boost-lib/type_traits.git
+[submodule "boost/mpl"]
+	path = boost/mpl
+	url = git://github.com/boost-lib/mpl.git
+[submodule "boost/preprocessor"]
+	path = boost/preprocessor
+	url = git://github.com/boost-lib/preprocessor.git
+[submodule "boost/optional"]
+	path = boost/optional
+	url = git://github.com/boost-lib/optional.git
+[submodule "boost/static_assert"]
+	path = boost/static_assert
+	url = git://github.com/boost-lib/static_assert.git
+[submodule "boost/exception"]
+	path = boost/exception
+	url = git://github.com/boost-lib/exception.git
+[submodule "boost/iterator"]
+	path = boost/iterator
+	url = git://github.com/boost-lib/iterator.git
+[submodule "boost/concept_check"]
+	path = boost/concept_check
+	url = git://github.com/boost-lib/concept_check.git

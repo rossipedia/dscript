@@ -16,10 +16,10 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 // Spirit Parser Framework Includes
-#include <boost/spirit.hpp>
-#include <boost/spirit/tree/parse_tree.hpp>
-#include <boost/spirit/tree/parse_tree_utils.hpp>
-#include <boost/spirit/tree/tree_to_xml.hpp>
+#include <boost/spirit/home/classic.hpp>
+#include <boost/spirit/home/classic/tree/parse_tree.hpp>
+#include <boost/spirit/home/classic/tree/parse_tree_utils.hpp>
+#include <boost/spirit/home/classic/tree/tree_to_xml.hpp>
 ////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -37,7 +37,7 @@
 // Use some namespaces to avoid wrist injury :)
 using namespace std;
 using namespace dscript;
-using namespace boost::spirit;
+using namespace boost::spirit::classic;
 ////////////////////////////////////////////////////////////////////////////////
 
 namespace dscript
@@ -71,7 +71,7 @@ struct compile_context
 
 /// This is the skip grammar. This grammar defines the language that
 /// the parser will use to skip white space and others
-struct skip_grammar : public boost::spirit::grammar<skip_grammar>
+struct skip_grammar : public boost::spirit::classic::grammar<skip_grammar>
 {
     template<typename ScanT>
     struct definition
@@ -87,8 +87,10 @@ struct skip_grammar : public boost::spirit::grammar<skip_grammar>
             BOOST_SPIRIT_DEBUG_RULE(skip);
             #endif
         }
-        rule<ScanT> skip;
-        const rule<ScanT>& start()
+        
+		rule<ScanT> skip;
+        
+		const rule<ScanT>& start()
         {
             return skip;
         }
@@ -146,7 +148,7 @@ enum parser_ids
 };
 
 /// This is the actual language specification for DScript
-struct grammar : public boost::spirit::grammar<grammar>
+struct grammar : public boost::spirit::classic::grammar<grammar>
 {
     template<typename ScanT>
     struct definition
@@ -1552,7 +1554,7 @@ void compile_parse_tree(const TreeNodeT& tree,compile_context& ctx)
 {
     // start from the top
     TreeNodeT::const_iterator iter = tree.begin();
-    compile_stmt_list(iter,ctx);
+	compile_stmt_list(iter,ctx);
 }
 
 // compile a string into a codeblock, using the passed string and float table
@@ -1578,25 +1580,32 @@ codeblock_t compile(const string& code,string_table& strings,float_table& floats
     tree_parse_info<iter_t,fact_t> info = pt_parse<fact_t>(first,last,g,s);
     if(info.full)
     {
-        typedef tree_node<
-            tree_match<
-                iter_t,
-                fact_t,
-                nil_t
-            >::parse_node_t
-        > node_t;
-        typedef vector<node_t>::const_iterator tree_iter_t;
+		if(info.length > 0)
+		{
+			typedef tree_node<
+				tree_match<
+					iter_t,
+					fact_t,
+					nil_t
+				>::parse_node_t
+			> node_t;
+			typedef vector<node_t>::const_iterator tree_iter_t;
         
-        try
-        {
-            compile_parse_tree(info.trees,ctx);
-        }
-        catch(compile_error<tree_iter_t>& e)
-        {
-            // construct a new compiler_error and toss it
-            file_position fp = e.node->value.begin().get_position();
-            throw compiler_error(e.what(),code_position(fp.line,fp.column));
-        }
+			try
+			{
+				compile_parse_tree(info.trees,ctx);
+			}
+			catch(compile_error<tree_iter_t>& e)
+			{
+				// construct a new compiler_error and toss it
+				file_position fp = e.node->value.begin().get_position();
+				throw compiler_error(e.what(),code_position(fp.line,fp.column));
+			}
+		}
+		else
+		{
+			// Empty code. All comments or some such
+		}
     }
     else
     {
