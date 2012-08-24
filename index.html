@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Dscript : A little ol' scripting language" />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Dscript</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/bryanjamesross/dscript">View on GitHub</a>
+
+          <h1 id="project_title">Dscript</h1>
+          <h2 id="project_tagline">A little ol' scripting language</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/bryanjamesross/dscript/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/bryanjamesross/dscript/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h1>dscript</h1>
+
+<p>This is a little scripting language I put together when I was heavy
+into c++ development and studying compiler theory. I haven't
+touched this code since it was finished up and pushed out to the
+boost.spirit mailing list in November of 2003. Below are the original
+emails announcing its completion.</p>
+
+<p><strong>Note:</strong> This does <em>not</em> build on current compilers. The version of
+boost that it uses is horribly outdated. I'm going to try to update
+this to current c++ compilers (g++, vs 2010/2012), but no guarantees</p>
+
+<hr><p>Subject: [Spirit-general] Scripting Language<br>
+From: "Bryan Ross" <del><a href="mailto:me@daerid.com">me@daerid.com</a></del> <a href="mailto:bryanjamesross@gmail.com">bryanjamesross@gmail.com</a><br>
+Date: Wed, 19 Nov 2003 18:46:04 -0800<br>
+To: <a href="mailto:spirit-general@lists.sourceforge.net">spirit-general@lists.sourceforge.net</a>  </p>
+
+<p>Hey all.</p>
+
+<p>Well, here it is. It's far from complete, and not 100% debugged, but it
+works. There's a sample main.cpp in the archive that will compile and
+execute the included test.txt file, which should demonstrate the syntax of
+the language fairly well. Also, the entire spirit grammar is in
+compiler.cpp, which will explicitly explain the syntax of the scripting
+language.</p>
+
+<p>I'd love for all of you to take a look and give me any possible feedback.
+Also, don't hesitate to rip it apart or improve on anything you see. The
+fact of the matter is, I don't have much time available right now to
+finishing and polishing it up. I'd just figure I'd get something out there
+that actually functions that others could take a look at and see how spirit
+may be used for designing and implementing a scripting language.</p>
+
+<p>I wanted to upload this to <a href="http://spirit.sourceforge.net/dl/">http://spirit.sourceforge.net/dl/</a>, but I forgot
+my login password, and the password recovery system is borked, so I'll just
+post it to the newsgroup.</p>
+
+<p>Also, to re-iterate, here is the post I made earlier, with some more info on
+the language:</p>
+
+<p>PS: Joel, I've updated the files all to sport a very slightly modified
+version of the spirit license.</p>
+
+<p>Bryan Ross
+<del><a href="mailto:me@daerid.com">me@daerid.com</a></del>
+<a href="mailto:bryanjamesross@gmail.com">bryanjamesross@gmail.com</a></p>
+
+<hr><p>-----Original Message-----<br>
+From: Bryan Ross [<a href="mailto:me@daerid.com">me@daerid.com</a>]<br>
+Sent: Thursday, November 13, 2003 10:15 AM<br>
+To: <a href="mailto:spirit-general@lists.sourceforge.net">spirit-general@lists.sourceforge.net</a><br>
+Subject: [Spirit-general] script language sample [UPDATE]  </p>
+
+<p>Hey all</p>
+
+<p>This is just a heads up that I'm still working on this, and it's almost
+complete. I decided to go with a parse tree instead of an AST, which
+unfortunately added a lot of code to the compilation process, but IMO makes
+the compiler more analogous to the parser and it also seems a bit easier to
+follow.</p>
+
+<p>I don't know if you'd call this a "simple" scripting language sample though
+(almost 4000 lines of code).</p>
+
+<p>The language has been dubbed "DScript".</p>
+
+<p>A few features:</p>
+
+<ul>
+<li>C like syntax (what else?</li>
+<li>Procedural language that supports both script defined and host environment
+functions.</li>
+<li>Multi-dimensional arrays.</li>
+<li>3 basic types: string, int, and double</li>
+<li>Variables are typeless</li>
+<li>Language defined local and global variables
+
+<ul>
+<li>%var (local variable, gets cleaned up at exit of current function)</li>
+<li>$var (global variable, sticks around until manually deleted)</li>
+</ul>
+</li>
+</ul><p>Some notes on implementation:</p>
+
+<ul>
+<li>Uses nothing but Spirit, Boost and the STD C++ library. Should be fully
+platform independent.</li>
+<li>Embedding into a host application is dead simple:
+
+<ol>
+<li>Include the source files in your project (or compile it into a .lib
+file and link with that)</li>
+<li>Include the dscript.hpp header</li>
+<li>create a dscript::context object</li>
+<li>call the methods of that context object to load and execute scripts.</li>
+</ol>
+</li>
+<li>Script code is compiled into byte-code that is executed by the runtime.</li>
+<li>Script files may be compiled into a byte-code binary format for faster
+loading time</li>
+<li>dscript::context objects are fully encapsulated. You can have any number
+created at any time.</li>
+<li>Script functions may be called by the host application through the context
+object.</li>
+<li>Errors generated are output to a specified std::ostream</li>
+</ul><p>Hopefully this should be done in the next couple of days, and then I'm going
+to clean it up and prepare it for release.
+I'm planning on making it dependent on spirit 1.8, so at the very least I'll
+be waiting until that release before this "goes gold".</p>
+
+<p>DScript will be released under the GNU Public License (GPL)</p>
+
+<p>Once fully finished, I'll submit it to the spirit application repository,
+and if it's good enough, maybe you guys could package it as an example.</p>
+
+<p>Bryan Ross
+<del><a href="mailto:me@daerid.com">me@daerid.com</a></del>
+<a href="mailto:bryanjamesross@gmail.com">bryanjamesross@gmail.com</a></p>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Dscript maintained by <a href="https://github.com/bryanjamesross">bryanjamesross</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
