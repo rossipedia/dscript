@@ -264,6 +264,9 @@ void dump_asm(const codeblock_t& codeblock,ostream& out)
                 out << codeblock[off].get_offset() << endl;
             }
             break;
+          default:
+            // Nop
+            break;
         }
      }
 }

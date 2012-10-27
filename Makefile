@@ -27,7 +27,7 @@ OBJS=$(SRCS:.cpp=.o)
 all: dscript
 
 clean:
-		rm *.dep; rm *.o
+		rm dscript; rm *.dep; rm *.o
 
 dscript: $(OBJS)
 	g++ $(LDFLAGS) -o dscript $(OBJS)

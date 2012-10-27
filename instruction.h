@@ -29,6 +29,7 @@ namespace dscript
     {
     public:
         instruction() { data.opcode = op_invalid; }
+        instruction(const instruction& other) { data = other.data; }
         instruction(op_code op) { data.opcode = op; }
         instruction(string_table::entry ste) { data.strval = ste; }
         instruction(float_table::entry fte) { data.fltval = fte; }

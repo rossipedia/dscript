@@ -64,10 +64,10 @@ codeblock_t load_compiled_file(const string& filename,string_table& strings,floa
     size_t instr_count = 0;
     read_elem(file,&instr_count);
     // allocate a buffer for the instructions
-    boost::scoped_array<unsigned int> buffer(new unsigned int[instr_count]);
+    boost::scoped_array<instruction> buffer(new instruction[instr_count]);
 
     // read all the instructions
-    read_elem(file,buffer.get(),instr_count * sizeof(unsigned int));
+    read_elem(file,buffer.get(),instr_count * sizeof(instruction));
 
     // copy to a codeblock
     codeblock_t code(buffer.get(),buffer.get() + instr_count);
@@ -237,6 +237,8 @@ void save_codeblock(const string& filename,const codeblock_t& code)
                 write_elem(file,&_i);
             }
             break;
+          default:
+            break; // NOP
         }
     }
     // codestream is written

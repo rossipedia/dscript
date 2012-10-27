@@ -52,13 +52,14 @@ namespace dscript
     struct code_position
     {
         code_position(int l,int c) : line(l), col(c) {}
-        code_position(const code_position& other) 
+        code_position(const code_position& other)
             : line(other.line), col(other.col)
         {}
         code_position& operator = (const code_position& other)
         {
             line = other.line;
             col = other.col;
+            return *this;
         }
         int line;
         int col;
@@ -69,7 +70,7 @@ namespace dscript
     struct compiler_error : public std::runtime_error
     {
         code_position pos;
-        compiler_error(const std::string& msg,const code_position& p) 
+        compiler_error(const std::string& msg,const code_position& p)
             : runtime_error(msg), pos(p)
         {}
     };
