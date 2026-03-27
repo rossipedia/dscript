@@ -47,8 +47,7 @@ PS: Joel, I've updated the files all to sport a very slightly modified
 version of the spirit license.
 
 Bryan Ross
-~~me@daerid.com~~
-bryanjamesross@gmail.com
+bryan@rossipedia.com
 
 -------------------------------------------------------------------------------
 
